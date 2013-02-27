@@ -29,6 +29,7 @@ from zipline.transforms.utils import StatefulTransform
 from zipline.finance.slippage import (
     VolumeShareSlippage,
     FixedSlippage,
+    NoSlippage,
     transact_partial
 )
 from zipline.finance.commission import PerShare, PerTrade
@@ -346,7 +347,7 @@ class TradingAlgorithm(object):
         self.trading_client.ordering_client.transact = transact
 
     def set_slippage(self, slippage):
-        assert isinstance(slippage, (VolumeShareSlippage, FixedSlippage)), \
+        assert isinstance(slippage, (VolumeShareSlippage, FixedSlippage, NoSlippage)), \
             MESSAGES.ERRORS.UNSUPPORTED_SLIPPAGE_MODEL
         if self.initialized:
             raise Exception(MESSAGES.ERRORS.OVERRIDE_SLIPPAGE_POST_INIT)

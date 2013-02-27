@@ -150,6 +150,40 @@ class VolumeShareSlippage(object):
             )
 
 
+class NoSlippage(object):
+
+    def __init__(self):
+        """
+        The NoSlippage model will be used with live trading.
+        It will take the actual trade at prices.
+        """
+
+    def simulate(self, event, open_orders):
+        if event.sid in open_orders:
+            orders = open_orders[event.sid]
+            orders = sorted(orders, key=lambda o: o.dt)
+        else:
+            return None
+
+        amount = 0
+        for order in orders:
+            amount += order.amount
+
+        if(amount == 0):
+            return
+
+        txn = create_transaction(
+            event.sid,
+            amount,
+            event.price,
+            event.dt
+        )
+
+        open_orders[event.sid] = []
+
+        return txn
+
+
 class FixedSlippage(object):
 
     def __init__(self, spread=0.0):
